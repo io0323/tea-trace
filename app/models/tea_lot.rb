@@ -1,4 +1,8 @@
 class TeaLot < ApplicationRecord
+  include Traceable
+  include Reportable
+  include Auditable
+
   has_many :process_events, dependent: :destroy
   has_many :shipments, dependent: :destroy
 
@@ -15,14 +19,14 @@ class TeaLot < ApplicationRecord
 
   def status_badge_color
     case status
-    when 'received'
-      'blue'
-    when 'processing'
-      'yellow'
-    when 'shipped'
-      'green'
+    when "received"
+      "blue"
+    when "processing"
+      "yellow"
+    when "shipped"
+      "green"
     else
-      'gray'
+      "gray"
     end
   end
 end
