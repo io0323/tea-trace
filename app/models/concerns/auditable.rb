@@ -13,11 +13,11 @@ module Auditable
     def audit_fields
       # Define which fields should be tracked for changes
       case self.name
-      when 'TeaLot'
+      when "TeaLot"
         %w[lot_code origin variety harvest_date quantity_kg status]
-      when 'ProcessEvent'
+      when "ProcessEvent"
         %w[event_type occurred_at note]
-      when 'Shipment'
+      when "Shipment"
         %w[destination shipped_at quantity_kg]
       else
         []
@@ -37,27 +37,27 @@ module Auditable
         ip_address: current_request_ip,
         user_agent: current_user_agent
       }
-      
+
       # Store audit log (in a real implementation, this would save to a database table)
       store_audit_entry(audit_entry)
-      
+
       audit_entry
     end
 
     def get_audit_history(record_id, options = {})
       # Retrieve audit history for a specific record
       audit_logs = retrieve_audit_logs(self.name, record_id)
-      
+
       if options[:limit]
         audit_logs = audit_logs.limit(options[:limit])
       end
-      
+
       if options[:order]
         audit_logs = audit_logs.order(options[:order] == :asc ? :timestamp : { timestamp: :desc })
       else
         audit_logs = audit_logs.order(timestamp: :desc)
       end
-      
+
       audit_logs
     end
 
@@ -74,14 +74,14 @@ module Auditable
     def search_audit_logs(query, options = {})
       # Search audit logs
       search_conditions = build_audit_search_conditions(query)
-      
+
       retrieve_audit_logs(nil, search_conditions, options)
     end
 
     def export_audit_logs(format = :csv, options = {})
       # Export audit logs in various formats
       logs = retrieve_audit_logs(nil, nil, options)
-      
+
       case format.to_sym
       when :csv
         export_audit_logs_to_csv(logs)
@@ -110,7 +110,7 @@ module Auditable
       # In a real implementation, this would save to an audit_logs table
       # For now, store in memory or file-based storage
       Rails.cache.write("audit_#{audit_entry[:id]}", audit_entry, expires_in: 1.year)
-      
+
       # Also add to a list for this record type
       type_key = "audit_list_#{self.name}"
       current_list = Rails.cache.read(type_key) || []
@@ -122,26 +122,26 @@ module Auditable
       # In a real implementation, this would query the audit_logs table
       # For now, retrieve from cache
       all_audit_ids = Rails.cache.read("audit_list_#{record_type || self.name}") || []
-      
+
       audit_logs = all_audit_ids.map do |audit_id|
         Rails.cache.read("audit_#{audit_id}")
       end.compact
-      
+
       # Filter by record ID if specified
       if record_id
         audit_logs = audit_logs.select { |log| log[:record_id] == record_id }
       end
-      
+
       # Apply additional conditions
       if conditions
         audit_logs = apply_audit_conditions(audit_logs, conditions)
       end
-      
+
       # Apply options
       if options[:limit]
         audit_logs = audit_logs.first(options[:limit])
       end
-      
+
       if options[:order]
         direction = options[:order] == :asc ? :asc : :desc
         audit_logs = audit_logs.sort_by { |log| log[:timestamp] }
@@ -149,14 +149,14 @@ module Auditable
       else
         audit_logs = audit_logs.sort_by { |log| log[:timestamp] }.reverse
       end
-      
+
       audit_logs
     end
 
     def apply_audit_conditions(logs, conditions)
       logs.select do |log|
         match = true
-        
+
         conditions.each do |key, value|
           case key
           when :action
@@ -171,7 +171,7 @@ module Auditable
             match &&= log.to_s.downcase.include?(value.to_s.downcase)
           end
         end
-        
+
         match
       end
     end
@@ -191,39 +191,39 @@ module Auditable
     def count_audits_by_type
       # Count audits by record type
       type_counts = {}
-      
+
       %w[TeaLot ProcessEvent Shipment].each do |type|
         audit_ids = Rails.cache.read("audit_list_#{type}") || []
         type_counts[type] = audit_ids.count
       end
-      
+
       type_counts
     end
 
     def count_audits_by_action
       # Count audits by action type
-      action_counts = { 'create' => 0, 'update' => 0, 'delete' => 0 }
-      
+      action_counts = { "create" => 0, "update" => 0, "delete" => 0 }
+
       all_audit_ids = Rails.cache.read("audit_list_#{self.name}") || []
-      
+
       all_audit_ids.each do |audit_id|
         audit = Rails.cache.read("audit_#{audit_id}")
         if audit && action_counts.key?(audit[:action])
           action_counts[audit[:action]] += 1
         end
       end
-      
+
       action_counts
     end
 
     def get_recent_audit_activity(limit = 10)
       # Get recent audit activity
       all_audit_ids = Rails.cache.read("audit_list_#{self.name}") || []
-      
+
       recent_audits = all_audit_ids.map do |audit_id|
         Rails.cache.read("audit_#{audit_id}")
       end.compact
-      
+
       recent_audits.sort_by { |audit| audit[:timestamp] }.reverse.first(limit)
     end
 
@@ -231,24 +231,24 @@ module Auditable
       # Calculate compliance score based on audit coverage and completeness
       total_records = count
       audited_records = count_distinct_audited_records
-      
+
       return 100 if total_records == 0
-      
+
       coverage_score = (audited_records.to_f / total_records * 100).round(1)
-      
+
       # Add other compliance factors
       completeness_score = calculate_audit_completeness
       timeliness_score = calculate_audit_timeliness
-      
+
       ((coverage_score + completeness_score + timeliness_score) / 3).round(1)
     end
 
     def calculate_audit_coverage
       total_records = count
       audited_records = count_distinct_audited_records
-      
+
       return 100 if total_records == 0
-      
+
       (audited_records.to_f / total_records * 100).round(1)
     end
 
@@ -256,7 +256,7 @@ module Auditable
       # Check if all required fields are being audited
       required_fields = audit_fields
       total_fields = required_fields.length
-      
+
       # In a real implementation, this would check actual audit data
       # For now, assume 90% completeness
       90.0
@@ -272,110 +272,110 @@ module Auditable
     def count_distinct_audited_records
       # Count distinct records that have audit logs
       all_audit_ids = Rails.cache.read("audit_list_#{self.name}") || []
-      
+
       distinct_record_ids = all_audit_ids.map do |audit_id|
         audit = Rails.cache.read("audit_#{audit_id}")
         audit[:record_id] if audit
       end.compact.uniq
-      
+
       distinct_record_ids.count
     end
 
     def identify_compliance_issues
       # Identify compliance issues based on audit logs
       issues = []
-      
+
       # Check for records without audit logs
       unaudited_records = count - count_distinct_audited_records
       if unaudited_records > 0
         issues << "#{unaudited_records} records without audit logs"
       end
-      
+
       # Check for unusual patterns
       recent_activity = get_recent_audit_activity(100)
       suspicious_patterns = identify_suspicious_patterns(recent_activity)
       issues.concat(suspicious_patterns)
-      
+
       issues
     end
 
     def identify_suspicious_patterns(audit_logs)
       # Identify suspicious patterns in audit logs
       patterns = []
-      
+
       # Check for bulk operations
       bulk_operations = identify_bulk_operations(audit_logs)
       patterns.concat(bulk_operations)
-      
+
       # Check for unusual timing
       unusual_timing = identify_unusual_timing(audit_logs)
       patterns.concat(unusual_timing)
-      
+
       patterns
     end
 
     def identify_bulk_operations(audit_logs)
       # Identify bulk operations (many similar actions in short time)
       patterns = []
-      
+
       # Group by action and timestamp
-      grouped_actions = audit_logs.group_by { |log| [log[:action], log[:timestamp].to_date] }
-      
+      grouped_actions = audit_logs.group_by { |log| [ log[:action], log[:timestamp].to_date ] }
+
       grouped_actions.each do |(action, date), logs|
         if logs.count > 50 # More than 50 similar actions in one day
           patterns << "Bulk #{action} operation detected on #{date}: #{logs.count} records"
         end
       end
-      
+
       patterns
     end
 
     def identify_unusual_timing(audit_logs)
       # Identify unusual timing patterns
       patterns = []
-      
+
       # Check for operations outside business hours
       off_hours_operations = audit_logs.select do |log|
         hour = log[:timestamp].hour
         hour < 6 || hour > 22
       end
-      
+
       if off_hours_operations.count > audit_logs.count * 0.1
         patterns << "High number of operations outside business hours: #{off_hours_operations.count}"
       end
-      
+
       patterns
     end
 
     def generate_compliance_recommendations
       # Generate compliance recommendations
       recommendations = []
-      
+
       coverage = calculate_audit_coverage
       if coverage < 95
         recommendations << "Increase audit coverage to at least 95%"
       end
-      
+
       completeness = calculate_audit_completeness
       if completeness < 95
         recommendations << "Improve audit completeness by tracking all required fields"
       end
-      
+
       timeliness = calculate_audit_timeliness
       if timeliness < 95
         recommendations << "Ensure audit logs are created in a timely manner"
       end
-      
+
       recommendations
     end
 
     def export_audit_logs_to_csv(logs)
       CSV.generate(headers: true) do |csv|
         csv << [
-          'ID', 'Record Type', 'Record ID', 'Action', 'User ID', 'User Email',
-          'Timestamp', 'IP Address', 'Changes'
+          "ID", "Record Type", "Record ID", "Action", "User ID", "User Email",
+          "Timestamp", "IP Address", "Changes"
         ]
-        
+
         logs.each do |log|
           csv << [
             log[:id],
@@ -410,27 +410,27 @@ module Auditable
           end
         end
       end
-      
+
       builder.to_xml
     end
 
     def current_request_ip
       # In a real implementation, this would get the current request IP
-      '127.0.0.1'
+      "127.0.0.1"
     end
 
     def current_user_agent
       # In a real implementation, this would get the current user agent
-      'TeaTrace System'
+      "TeaTrace System"
     end
   end
 
   def create_audit(action, changes = {}, user = nil)
     return unless self.class.audit_trail_enabled?
-    
+
     # Filter changes to only include audited fields
     filtered_changes = filter_audit_changes(changes)
-    
+
     self.class.create_audit_log(self, action, filtered_changes, user)
   end
 
@@ -449,14 +449,14 @@ module Auditable
   def audit_trail_complete?
     # Check if the audit trail is complete for this record
     required_actions = %w[create]
-    
+
     audit_actions = audit_history.pluck(:action)
     required_actions.all? { |action| audit_actions.include?(action) }
   end
 
   def recent_audit_activity(days = 30)
     cutoff_date = days.days.ago
-    
+
     audit_history.select do |audit|
       audit[:timestamp] > cutoff_date
     end
@@ -465,19 +465,19 @@ module Auditable
   def audit_compliance_score
     # Calculate individual record compliance score
     base_score = 50
-    
+
     # Add points for having create audit
-    create_audit = audit_history.find { |a| a[:action] == 'create' }
+    create_audit = audit_history.find { |a| a[:action] == "create" }
     base_score += 30 if create_audit
-    
+
     # Add points for having update audits
-    update_audits = audit_history.select { |a| a[:action] == 'update' }
-    base_score += [update_audits.count * 5, 20].min
-    
+    update_audits = audit_history.select { |a| a[:action] == "update" }
+    base_score += [ update_audits.count * 5, 20 ].min
+
     # Add points for completeness
     base_score += audit_trail_complete? ? 0 : -10
-    
-    [base_score, 0].max
+
+    [ base_score, 0 ].max
   end
 
   def export_audit_trail(format = :json)
@@ -487,7 +487,7 @@ module Auditable
       audit_summary: audit_summary,
       compliance_score: audit_compliance_score
     }
-    
+
     case format.to_sym
     when :json
       audit_data.to_json
@@ -505,38 +505,38 @@ module Auditable
   def filter_audit_changes(changes)
     # Filter changes to only include audited fields
     audited_fields = self.class.audit_fields
-    
+
     filtered_changes = {}
-    
+
     changes.each do |field, change|
       if audited_fields.include?(field.to_s)
         filtered_changes[field] = change
       end
     end
-    
+
     filtered_changes
   end
 
   def export_audit_trail_to_csv(audit_data)
     CSV.generate(headers: true) do |csv|
       # Record information
-      csv << ['Section', 'Field', 'Value']
-      
+      csv << [ "Section", "Field", "Value" ]
+
       audit_data[:record].each do |key, value|
-        csv << ['Record', key, value]
+        csv << [ "Record", key, value ]
       end
-      
+
       # Audit summary
-      csv << ['Summary', 'Total Audits', audit_data[:audit_summary][:total_audits]]
-      csv << ['Summary', 'Last Audited', audit_data[:audit_summary][:last_audited]]
-      csv << ['Summary', 'Compliance Score', audit_data[:audit_compliance_score]]
-      
+      csv << [ "Summary", "Total Audits", audit_data[:audit_summary][:total_audits] ]
+      csv << [ "Summary", "Last Audited", audit_data[:audit_summary][:last_audited] ]
+      csv << [ "Summary", "Compliance Score", audit_data[:audit_compliance_score] ]
+
       # Audit history
       audit_data[:audit_history].each_with_index do |audit, index|
-        csv << ["Audit #{index + 1}", 'Action', audit[:action]]
-        csv << ["Audit #{index + 1}", 'Timestamp', audit[:timestamp]]
-        csv << ["Audit #{index + 1}", 'User', audit[:user_email]]
-        csv << ["Audit #{index + 1}", 'Changes', audit[:changes].to_json]
+        csv << [ "Audit #{index + 1}", "Action", audit[:action] ]
+        csv << [ "Audit #{index + 1}", "Timestamp", audit[:timestamp] ]
+        csv << [ "Audit #{index + 1}", "User", audit[:user_email] ]
+        csv << [ "Audit #{index + 1}", "Changes", audit[:changes].to_json ]
       end
     end
   end
@@ -549,13 +549,13 @@ module Auditable
             xml.send(key, value)
           end
         end
-        
+
         xml.audit_summary do
           xml.total_audits audit_data[:audit_summary][:total_audits]
           xml.last_audited audit_data[:audit_summary][:last_audited]
           xml.compliance_score audit_data[:audit_compliance_score]
         end
-        
+
         xml.audit_history do
           audit_data[:audit_history].each_with_index do |audit, index|
             xml.audit(index: index) do
@@ -568,7 +568,7 @@ module Auditable
         end
       end
     end
-    
+
     builder.to_xml
   end
 end

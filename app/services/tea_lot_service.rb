@@ -2,44 +2,44 @@ class TeaLotService
   class << self
     def search_lots(query = nil)
       lots = TeaLot.includes(:process_events, :shipments)
-      
+
       if query.present?
         search_term = "%#{query}%"
-        lots = lots.where("lot_code ILIKE ? OR origin ILIKE ? OR variety ILIKE ?", 
+        lots = lots.where("lot_code ILIKE ? OR origin ILIKE ? OR variety ILIKE ?",
                          search_term, search_term, search_term)
       end
-      
+
       lots.order(harvest_date: :desc)
     end
 
     def update_status_based_on_events(tea_lot)
       events = tea_lot.process_events.order(:occurred_at)
-      
+
       new_status = case
-                   when events.where(event_type: 'packing').any?
-                     'shipped'
-                   when events.where(event_type: 'drying').any?
-                     'processing'
-                   when events.where(event_type: 'steaming').any?
-                     'processing'
-                   else
-                     'received'
-                   end
-      
+      when events.where(event_type: "packing").any?
+                     "shipped"
+      when events.where(event_type: "drying").any?
+                     "processing"
+      when events.where(event_type: "steaming").any?
+                     "processing"
+      else
+                     "received"
+      end
+
       tea_lot.update!(status: new_status) if tea_lot.status != new_status
     end
 
     def calculate_progress_percentage(tea_lot)
       events = tea_lot.process_events.pluck(:event_type)
       required_events = %w[steaming rolling drying packing]
-      
+
       completed_events = events & required_events
       (completed_events.length.to_f / required_events.length * 100).round(1)
     end
 
     def get_next_expected_event(tea_lot)
       completed_events = tea_lot.process_events.pluck(:event_type)
-      
+
       %w[steaming rolling drying packing].find do |event_type|
         !completed_events.include?(event_type)
       end
@@ -91,13 +91,13 @@ class TeaLotService
 
     def export_lots_to_csv(lots = nil)
       lots ||= TeaLot.includes(:process_events, :shipments).order(:lot_code)
-      
+
       CSV.generate(headers: true) do |csv|
         csv << [
-          'ロットコード', '産地', '品種', '収穫日', '数量(kg)', 'ステータス',
-          '工程イベント数', '最新工程日', '出荷数', '総出荷量(kg)', '残量(kg)'
+          "ロットコード", "産地", "品種", "収穫日", "数量(kg)", "ステータス",
+          "工程イベント数", "最新工程日", "出荷数", "総出荷量(kg)", "残量(kg)"
         ]
-        
+
         lots.each do |lot|
           csv << [
             lot.lot_code,
@@ -118,14 +118,14 @@ class TeaLotService
 
     def validate_lot_transition(tea_lot, new_status)
       current_events = tea_lot.process_events.pluck(:event_type)
-      
+
       case new_status
-      when 'processing'
-        return current_events.include?('steaming')
-      when 'shipped'
-        return current_events.include?('packing')
+      when "processing"
+        current_events.include?("steaming")
+      when "shipped"
+        current_events.include?("packing")
       else
-        return true
+        true
       end
     end
 
@@ -145,7 +145,7 @@ class TeaLotService
       lots_by_status = TeaLot.group(:status).count
       total_quantity = TeaLot.sum(:quantity_kg)
       total_shipped = Shipment.sum(:quantity_kg)
-      
+
       {
         total_lots: total_lots,
         lots_by_status: lots_by_status,
@@ -160,12 +160,12 @@ class TeaLotService
 
     def status_label(status)
       case status
-      when 'received'
-        '受入済'
-      when 'processing'
-        '加工中'
-      when 'shipped'
-        '出荷済'
+      when "received"
+        "受入済"
+      when "processing"
+        "加工中"
+      when "shipped"
+        "出荷済"
       else
         status
       end

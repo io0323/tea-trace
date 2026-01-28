@@ -26,22 +26,22 @@ process_events_data = [
   { tea_lot: tea_lots[0], event_type: "rolling", occurred_at: "2024-05-16 11:30", note: "揉み工程完了" },
   { tea_lot: tea_lots[0], event_type: "drying", occurred_at: "2024-05-16 14:00", note: "乾燥工程完了" },
   { tea_lot: tea_lots[0], event_type: "packing", occurred_at: "2024-05-17 10:00", note: "包装完了" },
-  
+
   # Events for TL-2024-002
   { tea_lot: tea_lots[1], event_type: "steaming", occurred_at: "2024-05-19 08:30", note: "蒸し工程完了" },
   { tea_lot: tea_lots[1], event_type: "rolling", occurred_at: "2024-05-19 11:00", note: "揉み工程完了" },
   { tea_lot: tea_lots[1], event_type: "drying", occurred_at: "2024-05-19 13:30", note: "乾燥工程完了" },
-  
+
   # Events for TL-2024-003
   { tea_lot: tea_lots[2], event_type: "steaming", occurred_at: "2024-05-21 09:15", note: "蒸し工程完了" },
   { tea_lot: tea_lots[2], event_type: "rolling", occurred_at: "2024-05-21 12:00", note: "揉み工程完了" },
   { tea_lot: tea_lots[2], event_type: "drying", occurred_at: "2024-05-21 15:00", note: "乾燥工程完了" },
   { tea_lot: tea_lots[2], event_type: "packing", occurred_at: "2024-05-22 09:00", note: "包装完了" },
-  
+
   # Events for TL-2024-004
   { tea_lot: tea_lots[3], event_type: "steaming", occurred_at: "2024-05-23 08:00", note: "蒸し工程完了" },
   { tea_lot: tea_lots[3], event_type: "rolling", occurred_at: "2024-05-23 10:30", note: "揉み工程完了" },
-  
+
   # Events for TL-2024-005
   { tea_lot: tea_lots[4], event_type: "steaming", occurred_at: "2024-05-26 09:30", note: "蒸し工程完了" },
   { tea_lot: tea_lots[4], event_type: "rolling", occurred_at: "2024-05-26 12:00", note: "揉み工程完了" },
@@ -65,10 +65,10 @@ shipments_data = [
   # Shipments for TL-2024-001
   { tea_lot: tea_lots[0], destination: "東京卸売市場", shipped_at: "2024-05-18", quantity_kg: 60.5 },
   { tea_lot: tea_lots[0], destination: "大阪茶業市場", shipped_at: "2024-05-20", quantity_kg: 60.0 },
-  
+
   # Shipments for TL-2024-002
   { tea_lot: tea_lots[1], destination: "名古屋茶流通センター", shipped_at: "2024-05-24", quantity_kg: 98.3 },
-  
+
   # Shipments for TL-2024-005
   { tea_lot: tea_lots[4], destination: "福岡茶業市場", shipped_at: "2024-05-28", quantity_kg: 45.0 },
   { tea_lot: tea_lots[4], destination: "熊本茶卸売", shipped_at: "2024-05-30", quantity_kg: 42.9 }

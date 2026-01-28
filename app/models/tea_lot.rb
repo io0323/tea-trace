@@ -19,14 +19,14 @@ class TeaLot < ApplicationRecord
 
   def status_badge_color
     case status
-    when 'received'
-      'blue'
-    when 'processing'
-      'yellow'
-    when 'shipped'
-      'green'
+    when "received"
+      "blue"
+    when "processing"
+      "yellow"
+    when "shipped"
+      "green"
     else
-      'gray'
+      "gray"
     end
   end
 end

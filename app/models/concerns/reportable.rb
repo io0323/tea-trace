@@ -41,20 +41,20 @@ module Reportable
     def report_templates
       [
         {
-          name: 'summary_report',
-          description: 'Basic summary of all records',
+          name: "summary_report",
+          description: "Basic summary of all records",
           fields: %w[id created_at updated_at],
           filters: %w[date_range status]
         },
         {
-          name: 'detailed_report',
-          description: 'Comprehensive report with all fields',
-          fields: 'all',
+          name: "detailed_report",
+          description: "Comprehensive report with all fields",
+          fields: "all",
           filters: %w[date_range status origin variety]
         },
         {
-          name: 'analytics_report',
-          description: 'Statistical analysis and metrics',
+          name: "analytics_report",
+          description: "Statistical analysis and metrics",
           fields: %w[count average sum min max],
           filters: %w[date_range group_by]
         }
@@ -64,22 +64,22 @@ module Reportable
     def scheduled_reports
       [
         {
-          name: 'daily_summary',
-          frequency: 'daily',
+          name: "daily_summary",
+          frequency: "daily",
           report_type: :summary,
           recipients: %w[manager@company.com],
           enabled: true
         },
         {
-          name: 'weekly_analytics',
-          frequency: 'weekly',
+          name: "weekly_analytics",
+          frequency: "weekly",
           report_type: :analytics,
           recipients: %w[analyst@company.com manager@company.com],
           enabled: true
         },
         {
-          name: 'monthly_traceability',
-          frequency: 'monthly',
+          name: "monthly_traceability",
+          frequency: "monthly",
           report_type: :traceability,
           recipients: %w[quality@company.com],
           enabled: false
@@ -91,7 +91,7 @@ module Reportable
 
     def generate_summary_report(options)
       scope = apply_filters(options)
-      
+
       {
         title: "#{self.name} Summary Report",
         generated_at: Time.current,
@@ -110,7 +110,7 @@ module Reportable
 
     def generate_detailed_report(options)
       scope = apply_filters(options)
-      
+
       {
         title: "#{self.name} Detailed Report",
         generated_at: Time.current,
@@ -128,7 +128,7 @@ module Reportable
 
     def generate_analytics_report(options)
       scope = apply_filters(options)
-      
+
       {
         title: "#{self.name} Analytics Report",
         generated_at: Time.current,
@@ -141,7 +141,7 @@ module Reportable
 
     def generate_traceability_report(options)
       scope = apply_filters(options)
-      
+
       {
         title: "#{self.name} Traceability Report",
         generated_at: Time.current,
@@ -154,7 +154,7 @@ module Reportable
 
     def generate_performance_report(options)
       scope = apply_filters(options)
-      
+
       {
         title: "#{self.name} Performance Report",
         generated_at: Time.current,
@@ -167,7 +167,7 @@ module Reportable
 
     def apply_filters(options)
       scope = all
-      
+
       if options[:start_date].present? && options[:end_date].present?
         if respond_to?(:harvest_date)
           scope = scope.where(harvest_date: options[:start_date]..options[:end_date])
@@ -177,25 +177,25 @@ module Reportable
           scope = scope.where(shipped_at: options[:start_date]..options[:end_date])
         end
       end
-      
+
       if options[:status].present? && respond_to?(:status)
         scope = scope.where(status: options[:status])
       end
-      
+
       if options[:origin].present? && respond_to?(:origin)
         scope = scope.where("origin ILIKE ?", "%#{options[:origin]}%")
       end
-      
+
       if options[:variety].present? && respond_to?(:variety)
         scope = scope.where(variety: options[:variety])
       end
-      
+
       scope
     end
 
     def calculate_analytics(scope)
       analytics = {}
-      
+
       # Basic statistics
       analytics[:basic_stats] = {
         count: scope.count,
@@ -204,68 +204,68 @@ module Reportable
         min: calculate_min(scope),
         max: calculate_max(scope)
       }
-      
+
       # Time-based analytics
       analytics[:time_stats] = calculate_time_statistics(scope)
-      
+
       # Group-based analytics
       analytics[:group_stats] = calculate_group_statistics(scope)
-      
+
       analytics
     end
 
     def calculate_trends(scope, options)
       trends = {}
-      
+
       # Daily trends
       if options[:include_daily_trends]
         trends[:daily] = calculate_daily_trends(scope)
       end
-      
+
       # Weekly trends
       if options[:include_weekly_trends]
         trends[:weekly] = calculate_weekly_trends(scope)
       end
-      
+
       # Monthly trends
       if options[:include_monthly_trends]
         trends[:monthly] = calculate_monthly_trends(scope)
       end
-      
+
       trends
     end
 
     def calculate_distributions(scope)
       distributions = {}
-      
+
       case self.name
-      when 'TeaLot'
+      when "TeaLot"
         distributions[:by_origin] = scope.group(:origin).count
         distributions[:by_variety] = scope.group(:variety).count
         distributions[:by_status] = scope.group(:status).count
         distributions[:quantity_ranges] = calculate_quantity_distribution(scope)
-      when 'ProcessEvent'
+      when "ProcessEvent"
         distributions[:by_event_type] = scope.group(:event_type).count
         distributions[:by_hour] = scope.group_by_hour(:occurred_at).count
         distributions[:by_day_of_week] = scope.group_by_day_of_week(:occurred_at).count
-      when 'Shipment'
+      when "Shipment"
         distributions[:by_destination] = scope.group(:destination).count
         distributions[:by_month] = scope.group_by_month(:shipped_at).count
         distributions[:quantity_ranges] = calculate_shipment_quantity_distribution(scope)
       end
-      
+
       distributions
     end
 
     def calculate_traceability_metrics(scope)
       metrics = {}
-      
-      if self.name == 'TeaLot'
+
+      if self.name == "TeaLot"
         metrics[:completeness_scores] = scope.map { |lot| lot.traceability_score }
         metrics[:average_completeness] = metrics[:completeness_scores].sum.to_f / metrics[:completeness_scores].count
         metrics[:grade_distribution] = scope.group_by { |lot| lot.traceability_grade }.transform_values(&:count)
       end
-      
+
       metrics
     end
 
@@ -276,10 +276,10 @@ module Reportable
         non_compliant_records: 0,
         compliance_issues: []
       }
-      
+
       scope.each do |record|
         validation = record.traceability_validation
-        
+
         if validation[:valid]
           compliance[:compliant_records] += 1
         else
@@ -287,10 +287,10 @@ module Reportable
           compliance[:compliance_issues].concat(validation[:errors])
         end
       end
-      
+
       compliance[:compliance_rate] = (compliance[:compliant_records].to_f / compliance[:total_records] * 100).round(1)
       compliance[:compliance_issues].uniq!
-      
+
       compliance
     end
 
@@ -308,44 +308,44 @@ module Reportable
 
     def calculate_performance_metrics(scope)
       metrics = {}
-      
+
       case self.name
-      when 'TeaLot'
+      when "TeaLot"
         metrics[:processing_efficiency] = calculate_processing_efficiency(scope)
         metrics[:shipment_efficiency] = calculate_shipment_efficiency(scope)
-      when 'ProcessEvent'
+      when "ProcessEvent"
         metrics[:event_frequency] = calculate_event_frequency(scope)
         metrics[:processing_times] = calculate_processing_times(scope)
-      when 'Shipment'
+      when "Shipment"
         metrics[:shipment_patterns] = calculate_shipment_patterns(scope)
       end
-      
+
       metrics
     end
 
     def calculate_benchmarks(scope)
       benchmarks = {}
-      
+
       # Industry benchmarks (mock data for demonstration)
       industry_benchmarks = {
-        'TeaLot' => {
+        "TeaLot" => {
           average_processing_time: 72, # hours
           average_shipment_time: 30, # days
           traceability_score: 85
         },
-        'ProcessEvent' => {
+        "ProcessEvent" => {
           events_per_day: 10,
           average_event_duration: 2 # hours
         },
-        'Shipment' => {
+        "Shipment" => {
           average_shipment_size: 50, # kg
           shipment_frequency: 5 # per week
         }
       }
-      
+
       current_metrics = calculate_current_metrics(scope)
       industry_metrics = industry_benchmarks[self.name] || {}
-      
+
       industry_metrics.each do |metric, industry_value|
         current_value = current_metrics[metric]
         if current_value
@@ -356,23 +356,23 @@ module Reportable
           }
         end
       end
-      
+
       benchmarks
     end
 
     def generate_recommendations(scope)
       recommendations = []
-      
+
       # Analyze data and generate recommendations
       case self.name
-      when 'TeaLot'
+      when "TeaLot"
         recommendations.concat(generate_tea_lot_recommendations(scope))
-      when 'ProcessEvent'
+      when "ProcessEvent"
         recommendations.concat(generate_process_event_recommendations(scope))
-      when 'Shipment'
+      when "Shipment"
         recommendations.concat(generate_shipment_recommendations(scope))
       end
-      
+
       recommendations
     end
 
@@ -380,15 +380,15 @@ module Reportable
       CSV.generate(headers: true) do |csv|
         if data.is_a?(Hash)
           # Export structured data
-          csv << ['Section', 'Key', 'Value']
-          
+          csv << [ "Section", "Key", "Value" ]
+
           data.each do |section, content|
             if content.is_a?(Hash)
               content.each do |key, value|
-                csv << [section, key, value]
+                csv << [ section, key, value ]
               end
             else
-              csv << [section, 'data', content]
+              csv << [ section, "data", content ]
             end
           end
         elsif data.respond_to?(:each)
@@ -397,8 +397,8 @@ module Reportable
             csv << data.first.keys
             data.each { |record| csv << record.values }
           else
-            csv << ['ID', 'Created At', 'Updated At']
-            data.each { |record| csv << [record.id, record.created_at, record.updated_at] }
+            csv << [ "ID", "Created At", "Updated At" ]
+            data.each { |record| csv << [ record.id, record.created_at, record.updated_at ] }
           end
         end
       end
@@ -433,7 +433,7 @@ module Reportable
           end
         end
       end
-      
+
       builder.to_xml
     end
 
@@ -478,46 +478,46 @@ module Reportable
 
     def calculate_time_statistics(scope)
       stats = {}
-      
+
       if respond_to?(:created_at)
         stats[:creation_range] = {
           earliest: scope.minimum(:created_at),
           latest: scope.maximum(:created_at)
         }
       end
-      
+
       if respond_to?(:occurred_at)
         stats[:occurrence_range] = {
           earliest: scope.minimum(:occurred_at),
           latest: scope.maximum(:occurred_at)
         }
       end
-      
+
       if respond_to?(:shipped_at)
         stats[:shipment_range] = {
           earliest: scope.minimum(:shipped_at),
           latest: scope.maximum(:shipped_at)
         }
       end
-      
+
       stats
     end
 
     def calculate_group_statistics(scope)
       stats = {}
-      
+
       if respond_to?(:status)
         stats[:by_status] = scope.group(:status).count
       end
-      
+
       if respond_to?(:origin)
         stats[:by_origin] = scope.group(:origin).count
       end
-      
+
       if respond_to?(:variety)
         stats[:by_variety] = scope.group(:variety).count
       end
-      
+
       stats
     end
 
@@ -553,20 +553,20 @@ module Reportable
 
     def calculate_quantity_distribution(scope)
       return {} unless respond_to?(:quantity_kg)
-      
+
       ranges = {
-        '0-50kg' => 0..50,
-        '51-100kg' => 51..100,
-        '101-500kg' => 101..500,
-        '501-1000kg' => 501..1000,
-        '1000kg+' => 1000..Float::INFINITY
+        "0-50kg" => 0..50,
+        "51-100kg" => 51..100,
+        "101-500kg" => 101..500,
+        "501-1000kg" => 501..1000,
+        "1000kg+" => 1000..Float::INFINITY
       }
-      
+
       distribution = {}
       ranges.each do |label, range|
         distribution[label] = scope.where(quantity_kg: range).count
       end
-      
+
       distribution
     end
 
@@ -576,65 +576,65 @@ module Reportable
 
     def calculate_current_metrics(scope)
       metrics = {}
-      
+
       case self.name
-      when 'TeaLot'
+      when "TeaLot"
         metrics[:average_processing_time] = 72 # Mock calculation
         metrics[:average_shipment_time] = 30 # Mock calculation
         metrics[:traceability_score] = 85 # Mock calculation
-      when 'ProcessEvent'
+      when "ProcessEvent"
         metrics[:events_per_day] = scope.group_by_day(:occurred_at).count.values.average.round(1)
         metrics[:average_event_duration] = 2 # Mock calculation
-      when 'Shipment'
+      when "Shipment"
         metrics[:average_shipment_size] = scope.average(:quantity_kg)&.round(1) || 0
         metrics[:shipment_frequency] = scope.group_by_week(:shipped_at).count.values.average.round(1)
       end
-      
+
       metrics
     end
 
     def generate_tea_lot_recommendations(scope)
       recommendations = []
-      
+
       # Check for lots with low traceability scores
       low_score_lots = scope.select { |lot| lot.traceability_score < 70 }
       if low_score_lots.any?
         recommendations << "#{low_score_lots.count} lots have traceability scores below 70. Consider improving data completeness."
       end
-      
+
       # Check for old lots
       old_lots = scope.where("harvest_date < ?", 1.year.ago)
       if old_lots.any?
         recommendations << "#{old_lots.count} lots are older than 1 year. Consider reviewing inventory."
       end
-      
+
       recommendations
     end
 
     def generate_process_event_recommendations(scope)
       recommendations = []
-      
+
       # Check for missing events
       incomplete_lots = TeaLot.left_joins(:process_events)
                               .group(:id)
-                              .having('COUNT(process_events.id) < 4')
-      
+                              .having("COUNT(process_events.id) < 4")
+
       if incomplete_lots.any?
         recommendations << "#{incomplete_lots.count} lots have incomplete processing events."
       end
-      
+
       recommendations
     end
 
     def generate_shipment_recommendations(scope)
       recommendations = []
-      
+
       # Check for unshipped lots
-      unshipped_lots = TeaLot.where.not(status: 'shipped')
+      unshipped_lots = TeaLot.where.not(status: "shipped")
       if unshipped_lots.any?
         recommendations << "#{unshipped_lots.count} lots have not been shipped yet."
       end
-      
+
       recommendations
     end
   end

@@ -5,9 +5,9 @@ class TeaTraceExporter
   DEFAULT_OPTIONS = {
     include_headers: true,
     include_metadata: true,
-    date_format: '%Y-%m-%d',
-    datetime_format: '%Y-%m-%d %H:%M:%S',
-    encoding: 'UTF-8'
+    date_format: "%Y-%m-%d",
+    datetime_format: "%Y-%m-%d %H:%M:%S",
+    encoding: "UTF-8"
   }.freeze
 
   attr_reader :export_log, :errors, :stats
@@ -25,11 +25,11 @@ class TeaTraceExporter
 
   def export_tea_lots(format = :csv, scope = nil, options = {})
     log_start("Tea Lots Export", format)
-    
+
     begin
       scope ||= TeaLot.includes(:process_events, :shipments)
       data = prepare_tea_lots_data(scope, options)
-      
+
       case format.to_sym
       when :csv
         result = export_tea_lots_to_csv(data, options)
@@ -44,10 +44,10 @@ class TeaTraceExporter
       else
         raise ArgumentError, "Unsupported format: #{format}"
       end
-      
+
       log_success("Tea Lots Export", "#{data.count} records exported")
       @stats[:records_exported] += data.count
-      
+
       result
     rescue => e
       log_error("Tea Lots Export", e.message)
@@ -57,11 +57,11 @@ class TeaTraceExporter
 
   def export_process_events(format = :csv, scope = nil, options = {})
     log_start("Process Events Export", format)
-    
+
     begin
       scope ||= ProcessEvent.includes(:tea_lot)
       data = prepare_process_events_data(scope, options)
-      
+
       case format.to_sym
       when :csv
         result = export_process_events_to_csv(data, options)
@@ -76,10 +76,10 @@ class TeaTraceExporter
       else
         raise ArgumentError, "Unsupported format: #{format}"
       end
-      
+
       log_success("Process Events Export", "#{data.count} records exported")
       @stats[:records_exported] += data.count
-      
+
       result
     rescue => e
       log_error("Process Events Export", e.message)
@@ -89,11 +89,11 @@ class TeaTraceExporter
 
   def export_shipments(format = :csv, scope = nil, options = {})
     log_start("Shipments Export", format)
-    
+
     begin
       scope ||= Shipment.includes(:tea_lot)
       data = prepare_shipments_data(scope, options)
-      
+
       case format.to_sym
       when :csv
         result = export_shipments_to_csv(data, options)
@@ -108,10 +108,10 @@ class TeaTraceExporter
       else
         raise ArgumentError, "Unsupported format: #{format}"
       end
-      
+
       log_success("Shipments Export", "#{data.count} records exported")
       @stats[:records_exported] += data.count
-      
+
       result
     rescue => e
       log_error("Shipments Export", e.message)
@@ -121,7 +121,7 @@ class TeaTraceExporter
 
   def export_full_traceability(format = :json, options = {})
     log_start("Full Traceability Export", format)
-    
+
     begin
       data = {
         tea_lots: prepare_tea_lots_data(TeaLot.includes(:process_events, :shipments), options),
@@ -129,7 +129,7 @@ class TeaTraceExporter
         shipments: prepare_shipments_data(Shipment.includes(:tea_lot), options),
         export_metadata: generate_export_metadata(options)
       }
-      
+
       case format.to_sym
       when :csv
         result = export_full_traceability_to_csv(data, options)
@@ -144,11 +144,11 @@ class TeaTraceExporter
       else
         raise ArgumentError, "Unsupported format: #{format}"
       end
-      
+
       total_records = data[:tea_lots].count + data[:process_events].count + data[:shipments].count
       log_success("Full Traceability Export", "#{total_records} records exported")
       @stats[:records_exported] += total_records
-      
+
       result
     rescue => e
       log_error("Full Traceability Export", e.message)
@@ -158,11 +158,11 @@ class TeaTraceExporter
 
   def export_traceability_report(tea_lot_id, format = :pdf, options = {})
     log_start("Traceability Report Export", "Lot #{tea_lot_id}, #{format}")
-    
+
     begin
       tea_lot = TeaLot.includes(:process_events, :shipments).find(tea_lot_id)
       data = generate_traceability_report_data(tea_lot, options)
-      
+
       case format.to_sym
       when :csv
         result = export_traceability_report_to_csv(data, options)
@@ -177,10 +177,10 @@ class TeaTraceExporter
       else
         raise ArgumentError, "Unsupported format: #{format}"
       end
-      
+
       log_success("Traceability Report Export", "Lot #{tea_lot_id} exported")
       @stats[:records_exported] += 1
-      
+
       result
     rescue => e
       log_error("Traceability Report Export", e.message)
@@ -190,10 +190,10 @@ class TeaTraceExporter
 
   def export_analytics_report(format = :pdf, options = {})
     log_start("Analytics Report Export", format)
-    
+
     begin
       data = generate_analytics_report_data(options)
-      
+
       case format.to_sym
       when :csv
         result = export_analytics_report_to_csv(data, options)
@@ -208,10 +208,10 @@ class TeaTraceExporter
       else
         raise ArgumentError, "Unsupported format: #{format}"
       end
-      
+
       log_success("Analytics Report Export", "Analytics data exported")
       @stats[:records_exported] += 1
-      
+
       result
     rescue => e
       log_error("Analytics Report Export", e.message)
@@ -221,18 +221,18 @@ class TeaTraceExporter
 
   def export_to_file(data, file_path, format = nil)
     format ||= determine_format_from_extension(file_path)
-    
+
     log_start("File Export", "#{file_path} (#{format})")
-    
+
     begin
       File.write(file_path, data, encoding: @options[:encoding])
-      
+
       file_size = File.size(file_path)
       @stats[:files_created] += 1
       @stats[:total_size_bytes] += file_size
-      
+
       log_success("File Export", "#{file_path} (#{file_size} bytes)")
-      
+
       {
         file_path: file_path,
         format: format,
@@ -247,9 +247,9 @@ class TeaTraceExporter
 
   def export_batch(export_requests, options = {})
     log_start("Batch Export", "#{export_requests.count} requests")
-    
+
     results = []
-    
+
     export_requests.each_with_index do |request, index|
       begin
         result = process_export_request(request, options)
@@ -260,10 +260,10 @@ class TeaTraceExporter
         log_error("Batch Export Item #{index + 1}", e.message)
       end
     end
-    
+
     successful_exports = results.count { |r| r[:success] }
     log_success("Batch Export", "#{successful_exports}/#{export_requests.count} completed")
-    
+
     results
   end
 
@@ -307,7 +307,7 @@ class TeaTraceExporter
         created_at: format_datetime(tea_lot.created_at),
         updated_at: format_datetime(tea_lot.updated_at)
       }
-      
+
       if options[:include_related_data]
         data[:process_events_count] = tea_lot.process_events.count
         data[:shipments_count] = tea_lot.shipments.count
@@ -316,7 +316,7 @@ class TeaTraceExporter
         data[:latest_event_date] = tea_lot.latest_event_date ? format_datetime(tea_lot.latest_event_date) : nil
         data[:traceability_score] = tea_lot.respond_to?(:traceability_score) ? tea_lot.traceability_score : nil
       end
-      
+
       if options[:include_full_data]
         data[:process_events] = tea_lot.process_events.map do |event|
           {
@@ -327,7 +327,7 @@ class TeaTraceExporter
             note: event.note
           }
         end
-        
+
         data[:shipments] = tea_lot.shipments.map do |shipment|
           {
             id: shipment.id,
@@ -337,7 +337,7 @@ class TeaTraceExporter
           }
         end
       end
-      
+
       data
     end
   end
@@ -355,7 +355,7 @@ class TeaTraceExporter
         created_at: format_datetime(event.created_at),
         updated_at: format_datetime(event.updated_at)
       }
-      
+
       if options[:include_tea_lot_data]
         data[:tea_lot] = {
           lot_code: event.tea_lot.lot_code,
@@ -365,7 +365,7 @@ class TeaTraceExporter
           status: event.tea_lot.status
         }
       end
-      
+
       data
     end
   end
@@ -382,7 +382,7 @@ class TeaTraceExporter
         created_at: format_datetime(shipment.created_at),
         updated_at: format_datetime(shipment.updated_at)
       }
-      
+
       if options[:include_tea_lot_data]
         data[:tea_lot] = {
           lot_code: shipment.tea_lot.lot_code,
@@ -392,14 +392,14 @@ class TeaTraceExporter
           status: shipment.tea_lot.status
         }
       end
-      
+
       data
     end
   end
 
   def generate_traceability_report_data(tea_lot, options = {})
     {
-      tea_lot: prepare_tea_lots_data([tea_lot], options.merge(include_full_data: true)).first,
+      tea_lot: prepare_tea_lots_data([ tea_lot ], options.merge(include_full_data: true)).first,
       traceability_analysis: tea_lot.respond_to?(:traceability_score) ? {
         score: tea_lot.traceability_score,
         grade: tea_lot.respond_to?(:traceability_grade) ? tea_lot.traceability_grade : nil,
@@ -411,7 +411,7 @@ class TeaTraceExporter
       compliance_status: generate_compliance_status(tea_lot),
       report_metadata: {
         generated_at: Time.current,
-        report_type: 'traceability',
+        report_type: "traceability",
         lot_code: tea_lot.lot_code
       }
     }
@@ -428,15 +428,15 @@ class TeaTraceExporter
       recommendations: generate_recommendations,
       report_metadata: {
         generated_at: Time.current,
-        report_type: 'analytics',
-        data_range: options[:date_range] || 'all_time'
+        report_type: "analytics",
+        data_range: options[:date_range] || "all_time"
       }
     }
   end
 
   def generate_processing_timeline(tea_lot)
     events = tea_lot.process_events.order(:occurred_at)
-    
+
     timeline = events.map.with_index do |event, index|
       {
         sequence: index + 1,
@@ -447,17 +447,21 @@ class TeaTraceExporter
         duration_from_previous: index > 0 ? calculate_duration(events[index - 1].occurred_at, event.occurred_at) : nil
       }
     end
-    
-    {
+    result = {
       events: timeline,
-      total_events: timeline.count,
-      processing_duration: calculate_duration(events.first.occurred_at, events.last.occurred_at) if events.count > 1
+      total_events: timeline.count
     }
+
+    if events.count > 1
+      result[:processing_duration] = calculate_duration(events.first.occurred_at, events.last.occurred_at)
+    end
+
+    result
   end
 
   def generate_shipment_history(tea_lot)
     shipments = tea_lot.shipments.order(:shipped_at)
-    
+
     {
       shipments: shipments.map do |shipment|
         {
@@ -516,7 +520,7 @@ class TeaTraceExporter
     {
       average_shipment_size: 45.6,
       shipment_frequency: 12.3,
-      top_destinations: ['東京卸売市場', '大阪茶業市場', '名古屋茶流通センター']
+      top_destinations: [ "東京卸売市場", "大阪茶業市場", "名古屋茶流通センター" ]
     }
   end
 
@@ -530,9 +534,9 @@ class TeaTraceExporter
 
   def generate_trends_analysis
     {
-      production_trend: 'increasing',
-      quality_trend: 'stable',
-      shipment_trend: 'increasing'
+      production_trend: "increasing",
+      quality_trend: "stable",
+      shipment_trend: "increasing"
     }
   end
 
@@ -540,23 +544,23 @@ class TeaTraceExporter
     {
       industry_average_processing_time: 96,
       industry_average_quality_score: 88.5,
-      performance_comparison: 'above_average'
+      performance_comparison: "above_average"
     }
   end
 
   def generate_recommendations
     [
-      'Consider optimizing processing time to improve efficiency',
-      'Maintain current quality standards',
-      'Explore new shipment destinations to expand market reach'
+      "Consider optimizing processing time to improve efficiency",
+      "Maintain current quality standards",
+      "Explore new shipment destinations to expand market reach"
     ]
   end
 
   def generate_export_metadata(options = {})
     {
       exported_at: Time.current,
-      export_version: '1.0',
-      data_version: '2024.1',
+      export_version: "1.0",
+      data_version: "2024.1",
       export_options: @options,
       record_counts: {
         tea_lots: TeaLot.count,
@@ -579,12 +583,12 @@ class TeaTraceExporter
 
   def status_label(status)
     case status
-    when 'received'
-      '受入済'
-    when 'processing'
-      '加工中'
-    when 'shipped'
-      '出荷済'
+    when "received"
+      "受入済"
+    when "processing"
+      "加工中"
+    when "shipped"
+      "出荷済"
     else
       status
     end
@@ -592,7 +596,7 @@ class TeaTraceExporter
 
   def calculate_duration(start_time, end_time)
     return nil unless start_time && end_time
-    
+
     duration = end_time - start_time
     {
       total_seconds: duration,
@@ -605,7 +609,7 @@ class TeaTraceExporter
     # Calculate data completeness percentage
     total_fields = 8 # lot_code, origin, variety, harvest_date, quantity_kg, status, created_at, updated_at
     filled_fields = 0
-    
+
     filled_fields += 1 if tea_lot.lot_code.present?
     filled_fields += 1 if tea_lot.origin.present?
     filled_fields += 1 if tea_lot.variety.present?
@@ -614,7 +618,7 @@ class TeaTraceExporter
     filled_fields += 1 if tea_lot.status.present?
     filled_fields += 1 if tea_lot.created_at.present?
     filled_fields += 1 if tea_lot.updated_at.present?
-    
+
     (filled_fields.to_f / total_fields * 100).round(1)
   end
 
@@ -630,17 +634,17 @@ class TeaTraceExporter
 
   def determine_format_from_extension(file_path)
     extension = File.extname(file_path).downcase
-    
+
     case extension
-    when '.csv'
+    when ".csv"
       :csv
-    when '.json'
+    when ".json"
       :json
-    when '.xml'
+    when ".xml"
       :xml
-    when '.xlsx', '.xls'
+    when ".xlsx", ".xls"
       :excel
-    when '.pdf'
+    when ".pdf"
       :pdf
     else
       :csv
@@ -673,7 +677,7 @@ class TeaTraceExporter
         headers = data.first.keys
         csv << headers
       end
-      
+
       data.each do |record|
         csv << record.values
       end
@@ -703,7 +707,7 @@ class TeaTraceExporter
         end
       end
     end
-    
+
     if @options[:include_metadata]
       builder = Nokogiri::XML::Builder.new(encoding: @options[:encoding]) do |xml|
         xml.export do
@@ -724,7 +728,7 @@ class TeaTraceExporter
         end
       end
     end
-    
+
     builder.to_xml
   end
 
@@ -749,7 +753,7 @@ class TeaTraceExporter
         headers = data.first.keys
         csv << headers
       end
-      
+
       data.each do |record|
         csv << record.values
       end
@@ -766,7 +770,7 @@ class TeaTraceExporter
         headers = data.first.keys
         csv << headers
       end
-      
+
       data.each do |record|
         csv << record.values
       end
@@ -791,15 +795,15 @@ class TeaTraceExporter
 
   def export_full_traceability_to_csv(data, options = {})
     CSV.generate(encoding: @options[:encoding]) do |csv|
-      csv << ['Section', 'Data']
-      
+      csv << [ "Section", "Data" ]
+
       data.each do |key, value|
         if value.is_a?(Array)
           value.each_with_index do |item, index|
-            csv << ["#{key}[#{index}]", item.to_json]
+            csv << [ "#{key}[#{index}]", item.to_json ]
           end
         else
-          csv << [key, value.to_json]
+          csv << [ key, value.to_json ]
         end
       end
     end
@@ -807,15 +811,15 @@ class TeaTraceExporter
 
   def export_traceability_report_to_csv(data, options = {})
     CSV.generate(encoding: @options[:encoding]) do |csv|
-      csv << ['Section', 'Key', 'Value']
-      
+      csv << [ "Section", "Key", "Value" ]
+
       data.each do |section, content|
         if content.is_a?(Hash)
           content.each do |key, value|
-            csv << [section, key, value]
+            csv << [ section, key, value ]
           end
         else
-          csv << [section, 'data', content]
+          csv << [ section, "data", content ]
         end
       end
     end
@@ -823,15 +827,15 @@ class TeaTraceExporter
 
   def export_analytics_report_to_csv(data, options = {})
     CSV.generate(encoding: @options[:encoding]) do |csv|
-      csv << ['Section', 'Key', 'Value']
-      
+      csv << [ "Section", "Key", "Value" ]
+
       data.each do |section, content|
         if content.is_a?(Hash)
           content.each do |key, value|
-            csv << [section, key, value]
+            csv << [ section, key, value ]
           end
         else
-          csv << [section, 'data', content]
+          csv << [ section, "data", content ]
         end
       end
     end
@@ -841,7 +845,7 @@ class TeaTraceExporter
   def log_start(operation, details)
     @export_log << {
       timestamp: Time.current,
-      level: 'info',
+      level: "info",
       operation: operation,
       details: details
     }
@@ -850,7 +854,7 @@ class TeaTraceExporter
   def log_success(operation, details)
     @export_log << {
       timestamp: Time.current,
-      level: 'success',
+      level: "success",
       operation: operation,
       details: details
     }
@@ -860,7 +864,7 @@ class TeaTraceExporter
     @errors << "#{operation}: #{details}"
     @export_log << {
       timestamp: Time.current,
-      level: 'error',
+      level: "error",
       operation: operation,
       details: details
     }
