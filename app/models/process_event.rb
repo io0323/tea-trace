@@ -9,14 +9,14 @@ class ProcessEvent < ApplicationRecord
 
   def event_type_label
     case event_type
-    when 'steaming'
-      '蒸熱'
-    when 'rolling'
-      '揉捻'
-    when 'drying'
-      '乾燥'
-    when 'packing'
-      '包装'
+    when "steaming"
+      "蒸熱"
+    when "rolling"
+      "揉捻"
+    when "drying"
+      "乾燥"
+    when "packing"
+      "包装"
     else
       event_type
     end
