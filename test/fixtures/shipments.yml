@@ -1,0 +1,13 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  tea_lot: one
+  destination: MyString
+  shipped_at: 2026-01-28
+  quantity_kg: 9.99
+
+two:
+  tea_lot: two
+  destination: MyString
+  shipped_at: 2026-01-28
+  quantity_kg: 9.99

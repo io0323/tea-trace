@@ -1,0 +1,123 @@
+<div class="min-h-screen bg-gray-50">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <!-- Header -->
+    <div class="mb-8">
+      <h1 class="text-3xl font-bold text-gray-900">茶葉ロット管理</h1>
+      <p class="mt-2 text-gray-600">原料受入から出荷までのトレーサビリティ管理</p>
+    </div>
+
+    <!-- Search Form -->
+    <div class="bg-white shadow rounded-lg p-6 mb-6">
+      <%= form_with url: tea_lots_path, method: :get, class: "flex gap-4" do |form| %>
+        <div class="flex-1">
+          <%= form.text_field :search, 
+              value: params[:search], 
+              placeholder: "ロットコードまたは産地で検索...",
+              class: "w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500" %>
+        </div>
+        <%= form.submit "検索", class: "px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors" %>
+        <% if params[:search].present? %>
+          <%= link_to "クリア", tea_lots_path, class: "px-6 py-2 bg-gray-500 text-white rounded-md hover:bg-gray-600 transition-colors" %>
+        <% end %>
+      <% end %>
+    </div>
+
+    <!-- Tea Lots Table -->
+    <div class="bg-white shadow rounded-lg overflow-hidden">
+      <div class="px-6 py-4 border-b border-gray-200">
+        <h2 class="text-lg font-semibold text-gray-900">ロット一覧</h2>
+      </div>
+      
+      <div class="overflow-x-auto">
+        <table class="min-w-full divide-y divide-gray-200">
+          <thead class="bg-gray-50">
+            <tr>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                ロットコード
+              </th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                産地
+              </th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                品種
+              </th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                収穫日
+              </th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                数量
+              </th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                ステータス
+              </th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                最新工程日
+              </th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                操作
+              </th>
+            </tr>
+          </thead>
+          <tbody class="bg-white divide-y divide-gray-200">
+            <% @tea_lots.each do |tea_lot| %>
+              <tr class="hover:bg-gray-50">
+                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                  <%= tea_lot.lot_code %>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  <%= tea_lot.origin %>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  <%= tea_lot.variety %>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  <%= tea_lot.harvest_date.strftime("%Y/%m/%d") %>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  <%= tea_lot.quantity_kg %> kg
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full 
+                    <% case tea_lot.status %>
+                    <% when 'received' %>bg-blue-100 text-blue-800
+                    <% when 'processing' %>bg-yellow-100 text-yellow-800
+                    <% when 'shipped' %>bg-green-100 text-green-800
+                    <% end %>">
+                    <% case tea_lot.status %>
+                    <% when 'received' %>受入済
+                    <% when 'processing' %>加工中
+                    <% when 'shipped' %>出荷済
+                    <% end %>
+                  </span>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  <% if tea_lot.latest_event_date %>
+                    <%= tea_lot.latest_event_date.strftime("%Y/%m/%d %H:%M") %>
+                  <% else %>
+                    -
+                  <% end %>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                  <%= link_to "詳細", tea_lot_path(tea_lot), 
+                      class: "text-blue-600 hover:text-blue-900 transition-colors" %>
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+
+      <% if @tea_lots.empty? %>
+        <div class="text-center py-12">
+          <p class="text-gray-500">
+            <% if params[:search].present? %>
+              検索条件に一致するロットが見つかりませんでした。
+            <% else %>
+              ロットが登録されていません。
+            <% end %>
+          </p>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>
