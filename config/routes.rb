@@ -2,10 +2,10 @@ Rails.application.routes.draw do
   get "process_events/new"
   get "process_events/create"
   root "tea_lots#index"
-  resources :tea_lots, only: [:index, :show] do
-    resources :process_events, only: [:new, :create]
+  resources :tea_lots, only: [ :index, :show ] do
+    resources :process_events, only: [ :new, :create ]
   end
-  
+
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
   # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.

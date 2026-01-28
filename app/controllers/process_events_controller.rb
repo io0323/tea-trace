@@ -7,13 +7,13 @@ class ProcessEventsController < ApplicationController
 
   def create
     @process_event = @tea_lot.process_events.build(process_event_params)
-    
+
     if @process_event.save
       # Update tea lot status based on events
       update_tea_lot_status
-      
+
       respond_to do |format|
-        format.turbo_stream { 
+        format.turbo_stream {
           turbo_stream.replace "modal" do
             render partial: "process_events/success", locals: { process_event: @process_event }
           end
@@ -22,7 +22,7 @@ class ProcessEventsController < ApplicationController
       end
     else
       respond_to do |format|
-        format.turbo_stream { 
+        format.turbo_stream {
           turbo_stream.replace "modal" do
             render partial: "process_events/form", locals: { process_event: @process_event }
           end
@@ -44,13 +44,13 @@ class ProcessEventsController < ApplicationController
 
   def update_tea_lot_status
     events = @tea_lot.process_events.order(:occurred_at)
-    
-    if events.where(event_type: 'packing').any?
-      @tea_lot.update!(status: 'shipped')
-    elsif events.where(event_type: 'drying').any?
-      @tea_lot.update!(status: 'processing')
+
+    if events.where(event_type: "packing").any?
+      @tea_lot.update!(status: "shipped")
+    elsif events.where(event_type: "drying").any?
+      @tea_lot.update!(status: "processing")
     else
-      @tea_lot.update!(status: 'processing')
+      @tea_lot.update!(status: "processing")
     end
   end
 end

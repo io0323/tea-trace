@@ -1,4 +1,7 @@
 class Shipment < ApplicationRecord
+  include Traceable
+  include Auditable
+
   belongs_to :tea_lot
 
   validates :destination, presence: true

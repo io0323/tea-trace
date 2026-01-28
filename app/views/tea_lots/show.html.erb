@@ -35,18 +35,7 @@
         </div>
         <div>
           <p class="text-sm font-medium text-gray-500">ステータス</p>
-          <span class="px-3 py-1 inline-flex text-sm leading-5 font-semibold rounded-full 
-            <% case @tea_lot.status %>
-            <% when 'received' %>bg-blue-100 text-blue-800
-            <% when 'processing' %>bg-yellow-100 text-yellow-800
-            <% when 'shipped' %>bg-green-100 text-green-800
-            <% end %>">
-            <% case @tea_lot.status %>
-            <% when 'received' %>受入済
-            <% when 'processing' %>加工中
-            <% when 'shipped' %>出荷済
-            <% end %>
-          </span>
+          <%= render "status_badge", tea_lot: @tea_lot %>
         </div>
       </div>
     </div>
