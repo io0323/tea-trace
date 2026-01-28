@@ -31,7 +31,7 @@
         </div>
         <div>
           <p class="text-sm font-medium text-gray-500">数量</p>
-          <p class="text-lg text-gray-900"><%= @tea_lot.quantity_kg %> kg</p>
+          <p class="text-lg text-gray-900"><%= @tea_lot.formatted_quantity %> kg</p>
         </div>
         <div>
           <p class="text-sm font-medium text-gray-500">ステータス</p>
@@ -115,7 +115,7 @@
                     <%= shipment.shipped_at.strftime("%Y年%m月%d日") %>
                   </td>
                   <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    <%= shipment.quantity_kg %> kg
+                    <%= shipment.formatted_quantity %> kg
                   </td>
                 </tr>
               <% end %>

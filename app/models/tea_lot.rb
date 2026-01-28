@@ -29,4 +29,8 @@ class TeaLot < ApplicationRecord
       "gray"
     end
   end
+
+  def formatted_quantity
+    sprintf('%.1f', quantity_kg)
+  end
 end

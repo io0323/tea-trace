@@ -8,6 +8,17 @@ class ProcessEvent < ApplicationRecord
   validates :occurred_at, presence: true
 
   def event_type_label
-    event_type.capitalize
+    case event_type
+    when 'steaming'
+      '蒸熱'
+    when 'rolling'
+      '揉捻'
+    when 'drying'
+      '乾燥'
+    when 'packing'
+      '包装'
+    else
+      event_type
+    end
   end
 end
