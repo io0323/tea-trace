@@ -1,4 +1,8 @@
 class TeaLot < ApplicationRecord
+  include Traceable
+  include Reportable
+  include Auditable
+
   has_many :process_events, dependent: :destroy
   has_many :shipments, dependent: :destroy
 

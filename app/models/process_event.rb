@@ -1,4 +1,7 @@
 class ProcessEvent < ApplicationRecord
+  include Traceable
+  include Auditable
+
   belongs_to :tea_lot
 
   validates :event_type, presence: true, inclusion: { in: %w[steaming rolling drying packing] }
