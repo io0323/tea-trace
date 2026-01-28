@@ -1,17 +1,17 @@
 # Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
 one:
-  lot_code: MyString
-  origin: MyString
-  variety: MyString
-  harvest_date: 2026-01-28
-  quantity_kg: 9.99
-  status: MyString
+  lot_code: TL-2024-001
+  origin: 鹿児島
+  variety: やぶきた
+  harvest_date: 2024-05-15
+  quantity_kg: 120.5
+  status: received
 
 two:
-  lot_code: MyString
-  origin: MyString
-  variety: MyString
-  harvest_date: 2026-01-28
-  quantity_kg: 9.99
-  status: MyString
+  lot_code: TL-2024-002
+  origin: 静岡
+  variety: さやまかおり
+  harvest_date: 2024-05-20
+  quantity_kg: 85.3
+  status: processing
