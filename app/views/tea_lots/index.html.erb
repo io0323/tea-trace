@@ -1,112 +1,184 @@
-<div class="min-h-screen bg-gray-50">
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-    <!-- Header -->
-    <div class="mb-8">
-      <h1 class="text-3xl font-bold text-gray-900">茶葉ロット管理</h1>
-      <p class="mt-2 text-gray-600">原料受入から出荷までのトレーサビリティ管理</p>
-    </div>
-
-    <!-- Search Form -->
-    <div class="bg-white shadow rounded-lg p-6 mb-6">
-      <%= form_with url: tea_lots_path, method: :get, class: "flex gap-4" do |form| %>
-        <div class="flex-1">
-          <%= form.text_field :search, 
-              value: params[:search], 
-              placeholder: "ロットコードまたは産地で検索...",
-              class: "w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500" %>
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+  <!-- Page Header -->
+  <div class="mb-8">
+    <div class="flex justify-between items-center">
+      <div>
+        <h1 class="text-3xl font-bold text-gray-900">茶葉ロット管理</h1>
+        <p class="mt-2 text-gray-600">原料受入から出荷までのトレーサビリティ管理</p>
+      </div>
+      <div class="flex items-center space-x-4">
+        <!-- Stats Cards -->
+        <div class="hidden sm:flex items-center space-x-6">
+          <div class="text-center">
+            <div class="text-2xl font-bold text-green-600"><%= @tea_lots.count %></div>
+            <div class="text-sm text-gray-500">総ロット数</div>
+          </div>
+          <div class="text-center">
+            <div class="text-2xl font-bold text-blue-600"><%= @tea_lots.where(status: 'processing').count %></div>
+            <div class="text-sm text-gray-500">加工中</div>
+          </div>
+          <div class="text-center">
+            <div class="text-2xl font-bold text-purple-600"><%= @tea_lots.where(status: 'shipped').count %></div>
+            <div class="text-sm text-gray-500">出荷済み</div>
+          </div>
         </div>
-        <%= form.submit "検索", class: "px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors" %>
-        <% if params[:search].present? %>
-          <%= link_to "クリア", tea_lots_path, class: "px-6 py-2 bg-gray-500 text-white rounded-md hover:bg-gray-600 transition-colors" %>
-        <% end %>
-      <% end %>
+      </div>
     </div>
+  </div>
 
-    <!-- Tea Lots Table -->
-    <div class="bg-white shadow rounded-lg overflow-hidden">
-      <div class="px-6 py-4 border-b border-gray-200">
+  <!-- Quick Actions -->
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+    <div class="bg-gradient-to-r from-green-500 to-green-600 rounded-lg p-6 text-white">
+      <div class="flex items-center justify-between">
+        <div>
+          <h3 class="text-lg font-semibold">新規ロット登録</h3>
+          <p class="text-green-100 text-sm mt-1">新しい茶葉ロットを登録</p>
+        </div>
+        <svg class="w-8 h-8 text-green-200" fill="currentColor" viewBox="0 0 20 20">
+          <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd"/>
+        </svg>
+      </div>
+    </div>
+    
+    <div class="bg-gradient-to-r from-blue-500 to-blue-600 rounded-lg p-6 text-white">
+      <div class="flex items-center justify-between">
+        <div>
+          <h3 class="text-lg font-semibold">工程記録</h3>
+          <p class="text-blue-100 text-sm mt-1">加工工程を記録</p>
+        </div>
+        <svg class="w-8 h-8 text-blue-200" fill="currentColor" viewBox="0 0 20 20">
+          <path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z"/>
+          <path fill-rule="evenodd" d="M4 5a2 2 0 012-2 1 1 0 000 2H6a2 2 0 00-2 2v6a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-1a1 1 0 100-2h1a4 4 0 014 4v6a4 4 0 01-4 4H6a4 4 0 01-4-4V7a4 4 0 014-4z" clip-rule="evenodd"/>
+        </svg>
+      </div>
+    </div>
+    
+    <div class="bg-gradient-to-r from-purple-500 to-purple-600 rounded-lg p-6 text-white">
+      <div class="flex items-center justify-between">
+        <div>
+          <h3 class="text-lg font-semibold">レポート出力</h3>
+          <p class="text-purple-100 text-sm mt-1">トレーサビリティレポート</p>
+        </div>
+        <svg class="w-8 h-8 text-purple-200" fill="currentColor" viewBox="0 0 20 20">
+          <path fill-rule="evenodd" d="M6 2a2 2 0 00-2 2v12a2 2 0 002 2h8a2 2 0 002-2V7.414A2 2 0 0015.414 6L12 2.586A2 2 0 0010.586 2H6zm5 6a1 1 0 10-2 0v3.586l-1.293-1.293a1 1 0 10-1.414 1.414l3 3a1 1 0 001.414 0l3-3a1 1 0 00-1.414-1.414L11 11.586V8z" clip-rule="evenodd"/>
+        </svg>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tea Lots Table -->
+  <div class="bg-white shadow rounded-lg overflow-hidden">
+    <div class="px-6 py-4 border-b border-gray-200">
+      <div class="flex justify-between items-center">
         <h2 class="text-lg font-semibold text-gray-900">ロット一覧</h2>
-      </div>
-      
-      <div class="overflow-x-auto">
-        <table class="min-w-full divide-y divide-gray-200">
-          <thead class="bg-gray-50">
-            <tr>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                ロットコード
-              </th>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                産地
-              </th>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                品種
-              </th>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                収穫日
-              </th>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                数量
-              </th>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                ステータス
-              </th>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                最新工程日
-              </th>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                操作
-              </th>
-            </tr>
-          </thead>
-          <tbody class="bg-white divide-y divide-gray-200">
-            <% @tea_lots.each do |tea_lot| %>
-              <tr class="hover:bg-gray-50">
-                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                  <%= tea_lot.lot_code %>
-                </td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  <%= tea_lot.origin %>
-                </td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  <%= tea_lot.variety %>
-                </td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  <%= tea_lot.harvest_date.strftime("%Y/%m/%d") %>
-                </td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  <%= tea_lot.formatted_quantity %> kg
-                </td>
-                <td class="px-6 py-4 whitespace-nowrap">
-                  <%= render "status_badge", tea_lot: tea_lot %>
-                </td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  <% if tea_lot.latest_event_date %>
-                    <%= tea_lot.latest_event_date.strftime("%Y/%m/%d %H:%M") %>
-                  <% else %>
-                    -
-                  <% end %>
-                </td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                  <%= link_to "詳細", tea_lot_path(tea_lot), 
-                      class: "text-blue-600 hover:text-blue-900 transition-colors" %>
-                </td>
-              </tr>
-            <% end %>
-          </tbody>
-        </table>
-      </div>
-
-      <% if @tea_lots.empty? %>
-        <div class="text-center py-12">
-          <p class="text-gray-500">
-            <% if params[:search].present? %>
-              検索条件に一致するロットが見つかりませんでした。
-            <% else %>
-              ロットが登録されていません。
-            <% end %>
-          </p>
+        <div class="flex items-center space-x-2">
+          <!-- Filter Buttons -->
+          <button class="px-3 py-1 text-sm bg-gray-100 text-gray-700 rounded-md hover:bg-gray-200 transition-colors">
+            すべて
+          </button>
+          <button class="px-3 py-1 text-sm text-gray-600 hover:bg-gray-100 rounded-md transition-colors">
+            受入済み
+          </button>
+          <button class="px-3 py-1 text-sm text-gray-600 hover:bg-gray-100 rounded-md transition-colors">
+            加工中
+          </button>
+          <button class="px-3 py-1 text-sm text-gray-600 hover:bg-gray-100 rounded-md transition-colors">
+            出荷済み
+          </button>
         </div>
-      <% end %>
+      </div>
     </div>
+    
+    <div class="overflow-x-auto">
+      <table class="min-w-full divide-y divide-gray-200">
+        <thead class="bg-gray-50">
+          <tr>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              ロットコード
+            </th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              産地
+            </th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              品種
+            </th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              収穫日
+            </th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              数量
+            </th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              ステータス
+            </th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              最新工程日
+            </th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              操作
+            </th>
+          </tr>
+        </thead>
+        <tbody class="bg-white divide-y divide-gray-200">
+          <% @tea_lots.each do |tea_lot| %>
+            <tr class="hover:bg-gray-50 transition-colors">
+              <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                <%= tea_lot.lot_code %>
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                <%= tea_lot.origin %>
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                <%= tea_lot.variety %>
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                <%= tea_lot.harvest_date.strftime("%Y/%m/%d") %>
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                <%= tea_lot.formatted_quantity %> kg
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap">
+                <%= render "status_badge", tea_lot: tea_lot %>
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                <% if tea_lot.latest_event_date %>
+                  <%= tea_lot.latest_event_date.strftime("%Y/%m/%d %H:%M") %>
+                <% else %>
+                  -
+                <% end %>
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                <%= link_to "詳細", tea_lot_path(tea_lot), 
+                    class: "text-blue-600 hover:text-blue-900 transition-colors" %>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+
+    <% if @tea_lots.empty? %>
+      <div class="text-center py-12">
+        <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"/>
+        </svg>
+        <h3 class="mt-2 text-sm font-medium text-gray-900">ロットが見つかりません</h3>
+        <p class="mt-1 text-sm text-gray-500">
+          <% if params[:search].present? %>
+            検索条件に一致するロットが見つかりませんでした。
+          <% else %>
+            最初の茶葉ロットを登録して始めましょう。
+          <% end %>
+        </p>
+        <div class="mt-6">
+          <button class="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
+            <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd"/>
+            </svg>
+            新規ロット登録
+          </button>
+        </div>
+      </div>
+    <% end %>
   </div>
 </div>

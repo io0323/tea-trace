@@ -1,0 +1,146 @@
+<!-- Navigation Header -->
+<nav class="bg-white shadow-sm border-b border-gray-200">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex justify-between items-center h-16">
+      <!-- Logo and Brand -->
+      <div class="flex items-center">
+        <%= link_to tea_lots_path, class: "flex items-center space-x-3 group" do %>
+          <!-- Tea Leaf Icon -->
+          <div class="w-8 h-8 bg-green-600 rounded-lg flex items-center justify-center group-hover:bg-green-700 transition-colors">
+            <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20">
+              <path d="M2 10a8 8 0 018-8v8h8a8 8 0 11-16 0z"/>
+              <path d="M12 2.252A8.014 8.014 0 0117.748 8H12V2.252z"/>
+            </svg>
+          </div>
+          <div>
+            <h1 class="text-xl font-bold text-gray-900">TeaTrace</h1>
+            <p class="text-xs text-gray-500">茶葉トレーサビリティ管理</p>
+          </div>
+        <% end %>
+      </div>
+
+      <!-- Desktop Navigation -->
+      <div class="hidden md:flex items-center space-x-8">
+        <%= link_to "ロット一覧", tea_lots_path, 
+            class: "text-gray-700 hover:text-green-600 px-3 py-2 rounded-md text-sm font-medium transition-colors #{'text-green-600 bg-green-50' if current_page?(tea_lots_path)}" %>
+        
+        <!-- Search Button -->
+        <button onclick="toggleSearch()" class="text-gray-700 hover:text-green-600 p-2 rounded-md transition-colors">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+          </svg>
+        </button>
+
+        <!-- User Menu -->
+        <div class="relative">
+          <button onclick="toggleUserMenu()" class="flex items-center space-x-2 text-gray-700 hover:text-green-600 p-2 rounded-md transition-colors">
+            <div class="w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center">
+              <svg class="w-5 h-5 text-gray-600" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"/>
+              </svg>
+            </div>
+          </button>
+          
+          <!-- User Dropdown -->
+          <div id="userMenu" class="hidden absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50">
+            <%= link_to "設定", "#", class: "block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" %>
+            <%= link_to "ログアウト", "#", class: "block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" %>
+          </div>
+        </div>
+      </div>
+
+      <!-- Mobile menu button -->
+      <div class="md:hidden">
+        <button onclick="toggleMobileMenu()" class="text-gray-700 hover:text-green-600 p-2 rounded-md transition-colors">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Mobile Navigation -->
+    <div id="mobileMenu" class="hidden md:hidden pb-4">
+      <div class="space-y-1">
+        <%= link_to "ロット一覧", tea_lots_path, 
+            class: "block text-gray-700 hover:text-green-600 hover:bg-gray-50 px-3 py-2 rounded-md text-base font-medium transition-colors #{'text-green-600 bg-green-50' if current_page?(tea_lots_path)}" %>
+        <button onclick="toggleSearch()" class="block w-full text-left text-gray-700 hover:text-green-600 hover:bg-gray-50 px-3 py-2 rounded-md text-base font-medium transition-colors">
+          検索
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Search Overlay -->
+  <div id="searchOverlay" class="hidden fixed inset-0 bg-black bg-opacity-50 z-40">
+    <div class="bg-white shadow-lg">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+        <div class="flex items-center space-x-4">
+          <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+          </svg>
+          <%= form_with url: tea_lots_path, method: :get, class: "flex-1" do |form| %>
+            <%= form.text_field :search, 
+                value: params[:search], 
+                placeholder: "ロットコードまたは産地で検索...",
+                class: "w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-green-500 focus:border-green-500",
+                autofocus: true %>
+          <% end %>
+          <button onclick="toggleSearch()" class="text-gray-400 hover:text-gray-600">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<!-- JavaScript for Navigation -->
+<script>
+function toggleMobileMenu() {
+  const menu = document.getElementById('mobileMenu');
+  menu.classList.toggle('hidden');
+}
+
+function toggleUserMenu() {
+  const menu = document.getElementById('userMenu');
+  menu.classList.toggle('hidden');
+}
+
+function toggleSearch() {
+  const overlay = document.getElementById('searchOverlay');
+  overlay.classList.toggle('hidden');
+  
+  if (!overlay.classList.contains('hidden')) {
+    // Focus search input when opening
+    setTimeout(() => {
+      const searchInput = overlay.querySelector('input[type="text"]');
+      if (searchInput) {
+        searchInput.focus();
+      }
+    }, 100);
+  }
+}
+
+// Close menus when clicking outside
+document.addEventListener('click', function(event) {
+  const userMenu = document.getElementById('userMenu');
+  const userButton = event.target.closest('button[onclick="toggleUserMenu()"]');
+  
+  if (!userButton && !userMenu.contains(event.target)) {
+    userMenu.classList.add('hidden');
+  }
+});
+
+// Close search with Escape key
+document.addEventListener('keydown', function(event) {
+  if (event.key === 'Escape') {
+    const searchOverlay = document.getElementById('searchOverlay');
+    if (!searchOverlay.classList.contains('hidden')) {
+      toggleSearch();
+    }
+  }
+});
+</script>
