@@ -1,0 +1,136 @@
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+  <!-- Breadcrumb -->
+  <nav class="flex mb-8" aria-label="Breadcrumb">
+    <ol class="inline-flex items-center space-x-1 md:space-x-3">
+      <li class="inline-flex items-center">
+        <%= link_to "ロット一覧", tea_lots_path, class: "text-gray-700 hover:text-green-600 inline-flex items-center" %>
+      </li>
+      <li>
+        <div class="flex items-center">
+          <svg class="w-4 h-4 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"/>
+          </svg>
+          <span class="ml-2 text-gray-500 md:ml-3">新規ロット作成</span>
+        </div>
+      </li>
+    </ol>
+  </nav>
+
+  <!-- Page Header -->
+  <div class="mb-8">
+    <h1 class="text-3xl font-bold text-gray-900">新規茶葉ロット作成</h1>
+    <p class="mt-2 text-gray-600">新しい茶葉ロットの基本情報を登録してください。</p>
+  </div>
+
+  <!-- Form -->
+  <div class="bg-white shadow rounded-lg overflow-hidden">
+    <div class="bg-gradient-to-r from-green-500 to-green-600 px-6 py-4">
+      <h2 class="text-xl font-semibold text-white">ロット情報</h2>
+    </div>
+    
+    <div class="p-6">
+      <%= form_with(model: @tea_lot, local: true, class: "space-y-6") do |form| %>
+        
+        <!-- Error Messages -->
+        <% if @tea_lot.errors.any? %>
+          <div class="bg-red-50 border border-red-200 rounded-md p-4">
+            <div class="flex">
+              <div class="flex-shrink-0">
+                <svg class="h-5 w-5 text-red-400" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
+                </svg>
+              </div>
+              <div class="ml-3">
+                <h3 class="text-sm font-medium text-red-800">
+                  <%= pluralize(@tea_lot.errors.count, "error") %> prohibited this tea lot from being saved:
+                </h3>
+                <div class="mt-2 text-sm text-red-700">
+                  <ul class="list-disc list-inside space-y-1">
+                    <% @tea_lot.errors.full_messages.each do |message| %>
+                      <li><%= message %></li>
+                    <% end %>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        <% end %>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <!-- Lot Code -->
+          <div>
+            <%= form.label :lot_code, class: "block text-sm font-medium text-gray-700 mb-2" %>
+            <%= form.text_field :lot_code, 
+                class: "w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500",
+                placeholder: "例: TL-2024-001" %>
+            <p class="mt-1 text-sm text-gray-500">一意のロットコードを入力してください</p>
+          </div>
+
+          <!-- Origin -->
+          <div>
+            <%= form.label :origin, class: "block text-sm font-medium text-gray-700 mb-2" %>
+            <%= form.text_field :origin, 
+                class: "w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500",
+                placeholder: "例: 鹿児島" %>
+            <p class="mt-1 text-sm text-gray-500">産地を入力してください</p>
+          </div>
+
+          <!-- Variety -->
+          <div>
+            <%= form.label :variety, class: "block text-sm font-medium text-gray-700 mb-2" %>
+            <%= form.text_field :variety, 
+                class: "w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500",
+                placeholder: "例: やぶきた" %>
+            <p class="mt-1 text-sm text-gray-500">茶葉の品種を入力してください</p>
+          </div>
+
+          <!-- Harvest Date -->
+          <div>
+            <%= form.label :harvest_date, class: "block text-sm font-medium text-gray-700 mb-2" %>
+            <%= form.date_field :harvest_date, 
+                class: "w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500" %>
+            <p class="mt-1 text-sm text-gray-500">収穫日を選択してください</p>
+          </div>
+
+          <!-- Quantity -->
+          <div>
+            <%= form.label :quantity_kg, class: "block text-sm font-medium text-gray-700 mb-2" %>
+            <div class="relative">
+              <%= form.number_field :quantity_kg, 
+                  step: "0.1",
+                  min: "0.1",
+                  class: "w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 pr-12",
+                  placeholder: "120.5" %>
+              <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                <span class="text-gray-500 sm:text-sm">kg</span>
+              </div>
+            </div>
+            <p class="mt-1 text-sm text-gray-500">数量（kg）を入力してください</p>
+          </div>
+
+          <!-- Status -->
+          <div>
+            <%= form.label :status, class: "block text-sm font-medium text-gray-700 mb-2" %>
+            <%= form.select :status, 
+                options_for_select([
+                  ["受入済み", "received"],
+                  ["加工中", "processing"], 
+                  ["出荷済み", "shipped"]
+                ], selected: "received"),
+                {},
+                { class: "w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500" } %>
+            <p class="mt-1 text-sm text-gray-500">現在のステータスを選択してください</p>
+          </div>
+        </div>
+
+        <!-- Form Actions -->
+        <div class="flex justify-end space-x-3 pt-6 border-t border-gray-200">
+          <%= link_to "キャンセル", tea_lots_path, 
+              class: "px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500" %>
+          <%= form.submit "ロットを作成", 
+              class: "px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500" %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>

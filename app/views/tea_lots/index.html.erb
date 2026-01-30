@@ -28,7 +28,7 @@
 
   <!-- Quick Actions -->
   <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
-    <div class="bg-gradient-to-r from-green-500 to-green-600 rounded-lg p-6 text-white">
+    <%= link_to new_tea_lot_path, class: "bg-gradient-to-r from-green-500 to-green-600 rounded-lg p-6 text-white hover:from-green-600 hover:to-green-700 transition-all transform hover:scale-105" do %>
       <div class="flex items-center justify-between">
         <div>
           <h3 class="text-lg font-semibold">新規ロット登録</h3>
@@ -38,7 +38,7 @@
           <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd"/>
         </svg>
       </div>
-    </div>
+    <% end %>
     
     <div class="bg-gradient-to-r from-blue-500 to-blue-600 rounded-lg p-6 text-white">
       <div class="flex items-center justify-between">
@@ -148,8 +148,20 @@
                 <% end %>
               </td>
               <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                <%= link_to "詳細", tea_lot_path(tea_lot), 
-                    class: "text-blue-600 hover:text-blue-900 transition-colors" %>
+                <div class="flex space-x-2">
+                  <%= link_to "詳細", tea_lot_path(tea_lot), 
+                      class: "text-blue-600 hover:text-blue-900 transition-colors" %>
+                  <%= link_to "編集", edit_tea_lot_path(tea_lot), 
+                      class: "text-green-600 hover:text-green-900 transition-colors" %>
+                  <% if tea_lot.process_events.empty? && tea_lot.shipments.empty? %>
+                    <%= link_to "削除", tea_lot_path(tea_lot), 
+                        method: :delete,
+                        data: { 
+                          confirm: "ロット「#{tea_lot.lot_code}」を削除してもよろしいですか？この操作は元に戻せません。" 
+                        },
+                        class: "text-red-600 hover:text-red-900 transition-colors" %>
+                  <% end %>
+                </div>
               </td>
             </tr>
           <% end %>
