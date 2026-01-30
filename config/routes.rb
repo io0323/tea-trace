@@ -2,7 +2,7 @@ Rails.application.routes.draw do
   get "process_events/new"
   get "process_events/create"
   root "tea_lots#index"
-  resources :tea_lots, only: [ :index, :show ] do
+  resources :tea_lots do
     resources :process_events, only: [ :new, :create ]
   end
 
