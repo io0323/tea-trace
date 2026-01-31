@@ -1,6 +1,6 @@
 class ProcessEventsController < ApplicationController
   before_action :set_tea_lot
-  before_action :set_process_event, only: [:show, :edit, :update, :destroy]
+  before_action :set_process_event, only: [ :show, :edit, :update, :destroy ]
 
   def new
     @process_event = @tea_lot.process_events.build
