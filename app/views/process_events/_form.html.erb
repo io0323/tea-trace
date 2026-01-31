@@ -3,8 +3,10 @@
     <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
       <div class="mt-3">
         <div class="flex items-center justify-between mb-4">
-          <h3 class="text-lg font-semibold text-gray-900">工程イベントを追加</h3>
-          <%= link_to "×", tea_lot_path(@tea_lot), 
+          <h3 class="text-lg font-semibold text-gray-900">
+            <%= @process_event.new_record? ? "工程イベントを追加" : "工程イベントを編集" %>
+          </h3>
+          <%= link_to "×", @process_event.new_record? ? tea_lot_path(@tea_lot) : tea_lot_process_event_path(@tea_lot, @process_event), 
               class: "text-gray-400 hover:text-gray-600 text-2xl font-bold",
               data: { turbo_frame: "modal" } %>
         </div>
@@ -50,10 +52,10 @@
           </div>
           
           <div class="flex justify-end space-x-3 pt-4">
-            <%= link_to "キャンセル", tea_lot_path(@tea_lot), 
+            <%= link_to "キャンセル", @process_event.new_record? ? tea_lot_path(@tea_lot) : tea_lot_process_event_path(@tea_lot, @process_event), 
                 class: "px-4 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400 transition-colors",
                 data: { turbo_frame: "modal" } %>
-            <%= form.submit "追加", class: "px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors" %>
+            <%= form.submit @process_event.new_record? ? "追加" : "更新", class: "px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors" %>
           </div>
         <% end %>
       </div>
