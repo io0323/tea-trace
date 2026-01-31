@@ -103,11 +103,11 @@ class ProcessEventsController < ApplicationController
   def update_tea_lot_status
     events = @tea_lot.process_events.order(:occurred_at)
 
-    if events.where(event_type: "packing").any?
+    if events.where(event_type: "packing").exists?
       @tea_lot.update!(status: "shipped")
-    elsif events.where(event_type: "drying").any?
+    elsif events.where(event_type: "drying").exists?
       @tea_lot.update!(status: "processing")
-    elsif events.any?
+    elsif events.exists?
       @tea_lot.update!(status: "processing")
     else
       @tea_lot.update!(status: "received")
