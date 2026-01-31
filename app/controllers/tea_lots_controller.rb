@@ -1,5 +1,5 @@
 class TeaLotsController < ApplicationController
-  before_action :set_tea_lot, only: [:show, :edit, :update, :destroy]
+  before_action :set_tea_lot, only: [ :show, :edit, :update, :destroy ]
 
   def index
     @tea_lots = TeaLot.includes(:process_events, :shipments)
@@ -22,7 +22,7 @@ class TeaLotsController < ApplicationController
 
   def create
     @tea_lot = TeaLot.new(tea_lot_params)
-    
+
     if @tea_lot.save
       redirect_to @tea_lot, notice: "茶葉ロットが正常に作成されました。"
     else

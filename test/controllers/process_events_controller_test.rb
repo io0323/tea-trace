@@ -71,7 +71,7 @@ class ProcessEventsControllerTest < ActionDispatch::IntegrationTest
 
   test "should not update process_event with invalid data" do
     original_event_type = @process_event.event_type
-    
+
     patch tea_lot_process_event_path(@tea_lot, @process_event), params: {
       process_event: {
         event_type: "",
@@ -95,7 +95,7 @@ class ProcessEventsControllerTest < ActionDispatch::IntegrationTest
 
   test "should update tea lot status when process_event is created" do
     @tea_lot.update!(status: "received")
-    
+
     post tea_lot_process_events_path(@tea_lot), params: {
       process_event: {
         event_type: "drying",
@@ -110,7 +110,7 @@ class ProcessEventsControllerTest < ActionDispatch::IntegrationTest
 
   test "should update tea lot status to shipped when packing is added" do
     @tea_lot.update!(status: "processing")
-    
+
     post tea_lot_process_events_path(@tea_lot), params: {
       process_event: {
         event_type: "packing",
@@ -129,7 +129,7 @@ class ProcessEventsControllerTest < ActionDispatch::IntegrationTest
       event_type: "rolling",
       occurred_at: 30.minutes.ago
     )
-    
+
     # Delete all events
     @tea_lot.process_events.each do |event|
       delete tea_lot_process_event_path(@tea_lot, event)

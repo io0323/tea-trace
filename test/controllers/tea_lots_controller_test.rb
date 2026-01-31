@@ -78,7 +78,7 @@ class TeaLotsControllerTest < ActionDispatch::IntegrationTest
   test "should not update tea_lot with invalid data" do
     tea_lot = tea_lots(:one)
     original_origin = tea_lot.origin
-    
+
     patch tea_lot_path(tea_lot), params: {
       tea_lot: {
         lot_code: "",
@@ -94,7 +94,7 @@ class TeaLotsControllerTest < ActionDispatch::IntegrationTest
 
   test "should destroy tea_lot" do
     tea_lot = tea_lots(:one)
-    
+
     assert_difference("TeaLot.count", -1) do
       delete tea_lot_path(tea_lot)
     end
