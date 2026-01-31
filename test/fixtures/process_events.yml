@@ -7,7 +7,7 @@ one:
   note: MyText
 
 two:
-  tea_lot: two
-  event_type: MyString
-  occurred_at: 2026-01-28 15:46:42
-  note: MyText
+  tea_lot: one
+  event_type: steaming
+  occurred_at: 2026-01-28 16:46:42
+  note: Another event for tea_lot one

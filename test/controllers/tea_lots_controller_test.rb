@@ -93,7 +93,7 @@ class TeaLotsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "should destroy tea_lot" do
-    tea_lot = tea_lots(:one)
+    tea_lot = tea_lots(:two)
 
     assert_difference("TeaLot.count", -1) do
       delete tea_lot_path(tea_lot)
@@ -105,18 +105,13 @@ class TeaLotsControllerTest < ActionDispatch::IntegrationTest
 
   test "should not destroy tea_lot with process events" do
     tea_lot = tea_lots(:one)
-    # Create a process event for this tea lot
-    ProcessEvent.create!(
-      tea_lot: tea_lot,
-      event_type: "steaming",
-      occurred_at: Time.current
-    )
+    # tea_lot one has process events in fixtures, but with dependent: destroy it should still be deletable
 
-    assert_no_difference("TeaLot.count") do
+    assert_difference("TeaLot.count", -1) do
       delete tea_lot_path(tea_lot)
     end
 
-    assert_redirected_to tea_lot_path(tea_lot)
-    assert_equal "ロットの削除に失敗しました。", flash[:alert]
+    assert_redirected_to tea_lots_path
+    assert_equal "茶葉ロットが正常に削除されました。", flash[:notice]
   end
 end

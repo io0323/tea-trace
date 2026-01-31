@@ -3,8 +3,8 @@ class TeaLot < ApplicationRecord
   include Reportable
   include Auditable
 
-  has_many :process_events, dependent: :restrict_with_error
-  has_many :shipments, dependent: :restrict_with_error
+  has_many :process_events, dependent: :destroy
+  has_many :shipments, dependent: :destroy
 
   validates :lot_code, presence: true, uniqueness: true
   validates :origin, presence: true
