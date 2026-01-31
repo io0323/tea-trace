@@ -1,9 +1,7 @@
 Rails.application.routes.draw do
-  get "process_events/new"
-  get "process_events/create"
   root "tea_lots#index"
   resources :tea_lots do
-    resources :process_events, only: [ :new, :create ]
+    resources :process_events
   end
 
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
