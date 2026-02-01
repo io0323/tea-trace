@@ -2,6 +2,7 @@ Rails.application.routes.draw do
   root "tea_lots#index"
   resources :tea_lots do
     resources :process_events
+    resources :shipments
   end
 
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html

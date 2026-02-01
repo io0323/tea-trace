@@ -1,0 +1,128 @@
+<% content_for :title, "出荷情報詳細" %>
+
+<div class="min-h-screen bg-gray-50">
+  <%= render "shared/navigation" %>
+  
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <!-- Page Header -->
+    <div class="mb-8">
+      <nav class="flex mb-4" aria-label="Breadcrumb">
+        <ol class="flex items-center space-x-4">
+          <li>
+            <%= link_to "ホーム", root_path, class: "text-gray-500 hover:text-gray-700" %>
+          </li>
+          <li>
+            <div class="flex items-center">
+              <svg class="flex-shrink-0 h-5 w-5 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"/>
+              </svg>
+              <%= link_to "ロット詳細", tea_lot_path(@tea_lot), class: "ml-4 text-gray-500 hover:text-gray-700" %>
+            </div>
+          </li>
+          <li>
+            <div class="flex items-center">
+              <svg class="flex-shrink-0 h-5 w-5 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"/>
+              </svg>
+              <%= link_to "出荷情報一覧", tea_lot_shipments_path(@tea_lot), class: "ml-4 text-gray-500 hover:text-gray-700" %>
+            </div>
+          </li>
+          <li>
+            <div class="flex items-center">
+              <svg class="flex-shrink-0 h-5 w-5 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"/>
+              </svg>
+              <span class="ml-4 text-gray-500">出荷情報詳細</span>
+            </div>
+          </li>
+        </ol>
+      </nav>
+
+      <div class="flex justify-between items-start">
+        <div>
+          <h1 class="text-3xl font-bold text-gray-900">出荷情報詳細</h1>
+          <p class="mt-2 text-gray-600">ロット: <%= @tea_lot.lot_code %> | <%= @shipment.destination %></p>
+        </div>
+        <div class="flex items-center space-x-3">
+          <%= link_to "編集", edit_tea_lot_shipment_path(@tea_lot, @shipment) %>
+          <%= link_to "削除", [@tea_lot, @shipment], 
+              method: :delete %>
+        </div>
+      </div>
+    </div>
+
+    <!-- Shipment Information Card -->
+    <div class="bg-white shadow rounded-lg overflow-hidden mb-8">
+      <div class="bg-gradient-to-r from-green-500 to-green-600 px-6 py-4">
+        <h2 class="text-xl font-semibold text-white">出荷情報</h2>
+      </div>
+      
+      <div class="p-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div>
+            <h3 class="text-sm font-medium text-gray-500">出荷先</h3>
+            <p class="mt-1 text-lg text-gray-900"><%= @shipment.destination %></p>
+          </div>
+          
+          <div>
+            <h3 class="text-sm font-medium text-gray-500">出荷日</h3>
+            <p class="mt-1 text-lg text-gray-900"><%= @shipment.shipped_at.strftime("%Y年%m月%d日") %></p>
+          </div>
+          
+          <div>
+            <h3 class="text-sm font-medium text-gray-500">出荷数量</h3>
+            <p class="mt-1 text-lg text-gray-900"><%= @shipment.formatted_quantity %> kg</p>
+          </div>
+          
+          <div>
+            <h3 class="text-sm font-medium text-gray-500">登録日時</h3>
+            <p class="mt-1 text-lg text-gray-900"><%= @shipment.created_at.strftime("%Y年%m月%d日 %H:%M") %></p>
+          </div>
+        </div>
+        
+        <% if @shipment.notes.present? %>
+          <div class="mt-6">
+            <h3 class="text-sm font-medium text-gray-500">備考</h3>
+            <p class="mt-1 text-gray-900 whitespace-pre-wrap"><%= @shipment.notes %></p>
+          </div>
+        <% end %>
+      </div>
+    </div>
+
+    <!-- Tea Lot Information Card -->
+    <div class="bg-white shadow rounded-lg overflow-hidden">
+      <div class="bg-gradient-to-r from-blue-500 to-blue-600 px-6 py-4">
+        <h2 class="text-xl font-semibold text-white">関連ロット情報</h2>
+      </div>
+      
+      <div class="p-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div>
+            <h3 class="text-sm font-medium text-gray-500">ロットコード</h3>
+            <p class="mt-1 text-lg text-gray-900"><%= @tea_lot.lot_code %></p>
+          </div>
+          
+          <div>
+            <h3 class="text-sm font-medium text-gray-500">産地</h3>
+            <p class="mt-1 text-lg text-gray-900"><%= @tea_lot.origin %></p>
+          </div>
+          
+          <div>
+            <h3 class="text-sm font-medium text-gray-500">品種</h3>
+            <p class="mt-1 text-lg text-gray-900"><%= @tea_lot.variety %></p>
+          </div>
+          
+          <div>
+            <h3 class="text-sm font-medium text-gray-500">収穫日</h3>
+            <p class="mt-1 text-lg text-gray-900"><%= @tea_lot.harvest_date.strftime("%Y年%m月%d日") %></p>
+          </div>
+        </div>
+        
+        <div class="mt-6 flex justify-center">
+          <%= link_to "ロット詳細へ", tea_lot_path(@tea_lot), 
+              class: "inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500" %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_01_28_064653) do
+ActiveRecord::Schema[8.1].define(version: 2026_02_01_151115) do
   create_table "process_events", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.string "event_type"
@@ -24,6 +24,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_28_064653) do
   create_table "shipments", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.string "destination"
+    t.text "notes"
     t.decimal "quantity_kg"
     t.date "shipped_at"
     t.integer "tea_lot_id", null: false

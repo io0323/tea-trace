@@ -2,12 +2,14 @@
 
 one:
   tea_lot: one
-  destination: MyString
-  shipped_at: 2026-01-28
-  quantity_kg: 9.99
+  destination: 東京配送センター
+  shipped_at: 2024-06-01
+  quantity_kg: 50.5
+  notes: 最初の出荷情報
 
 two:
   tea_lot: two
-  destination: MyString
-  shipped_at: 2026-01-28
-  quantity_kg: 9.99
+  destination: 大阪倉庫
+  shipped_at: 2024-06-15
+  quantity_kg: 30.0
+  notes: 二番目の出荷情報
