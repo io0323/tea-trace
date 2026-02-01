@@ -70,7 +70,7 @@ class ShipmentsControllerTest < ActionDispatch::IntegrationTest
 
     assert_redirected_to tea_lot_shipment_url(@tea_lot, @shipment)
     assert_equal "出荷情報が正常に更新されました。", flash[:notice]
-    
+
     @shipment.reload
     assert_equal "更新された出荷先", @shipment.destination
     assert_equal 75.0, @shipment.quantity_kg
@@ -78,7 +78,7 @@ class ShipmentsControllerTest < ActionDispatch::IntegrationTest
 
   test "should not update shipment with invalid data" do
     original_destination = @shipment.destination
-    
+
     patch tea_lot_shipment_url(@tea_lot, @shipment), params: {
       shipment: {
         destination: "",
@@ -89,7 +89,7 @@ class ShipmentsControllerTest < ActionDispatch::IntegrationTest
 
     assert_response :unprocessable_entity
     assert_not_nil flash[:alert]
-    
+
     @shipment.reload
     assert_equal original_destination, @shipment.destination
   end
