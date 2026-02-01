@@ -1,6 +1,6 @@
 class ShipmentsController < ApplicationController
-  before_action :set_shipment, only: [:show, :edit, :update, :destroy]
-  before_action :set_tea_lot, only: [:index, :new, :create]
+  before_action :set_shipment, only: [ :show, :edit, :update, :destroy ]
+  before_action :set_tea_lot, only: [ :index, :new, :create ]
 
   def index
     @shipments = @tea_lot.shipments.order(shipped_at: :desc)
@@ -17,7 +17,7 @@ class ShipmentsController < ApplicationController
     @shipment = @tea_lot.shipments.new(shipment_params)
 
     if @shipment.save
-      redirect_to [@tea_lot, @shipment], notice: "出荷情報が正常に作成されました。"
+      redirect_to [ @tea_lot, @shipment ], notice: "出荷情報が正常に作成されました。"
     else
       flash[:alert] = @shipment.errors.full_messages.join(", ")
       render :new, status: :unprocessable_entity
@@ -29,7 +29,7 @@ class ShipmentsController < ApplicationController
 
   def update
     if @shipment.update(shipment_params)
-      redirect_to [@tea_lot, @shipment], notice: "出荷情報が正常に更新されました。"
+      redirect_to [ @tea_lot, @shipment ], notice: "出荷情報が正常に更新されました。"
     else
       flash[:alert] = @shipment.errors.full_messages.join(", ")
       render :edit, status: :unprocessable_entity
